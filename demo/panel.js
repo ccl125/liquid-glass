@@ -7,13 +7,14 @@
 import { injectLiquidGlassFilter, updateLiquidGlassFilter } from '../src/core.js';
 import { generateMapDataURI, MAP_DEFAULTS } from './mapgen.js';
 
-// Defaults match the original project: scales -140/-124/-108, saturate 1.35,
-// map edge 16px / gamma 3 (strength 124 = middle channel, dispersion 32 =
-// total R↔B spread).
+// Legibility-first defaults: scales -127/-124/-121, saturate 1.35,
+// map edge 16px / gamma 3 (strength 124 = middle channel, dispersion 6 =
+// total R↔B spread). The original project used -140/-124/-108 (spread 32),
+// which ghosts text badly; 6 keeps text crisp with a subtle rainbow rim.
 const DEFAULTS = {
   size: 62,
   strength: 124,
-  dispersion: 32,
+  dispersion: 6,
   saturate: 1.35,
   edge: MAP_DEFAULTS.edge,
   gamma: MAP_DEFAULTS.gamma,

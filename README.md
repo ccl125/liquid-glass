@@ -65,7 +65,7 @@ Done — the nav is now a liquid glass lens (in Chromium; frosted glass elsewher
    ![close-up: stripes bend as they cross the glass edge, with a chromatic fringe along the rim](docs/refraction-closeup.png)
 
    *Edge refraction band + chromatic fringe: the diagonal stripes warp and magnify as they pass under the glass, hardest within ~16px of the rim.*
-4. **Chromatic dispersion**: the same map is applied 3 times with slightly different scales (`-140 / -124 / -108`). Each result is reduced to a single RGB channel via `feColorMatrix`, then the three are recombined with `feBlend mode="screen"`. The slight displacement difference between channels is the rainbow fringe.
+4. **Chromatic dispersion**: the same map is applied 3 times with slightly different scales (`-127 / -124 / -121` by default). Each result is reduced to a single RGB channel via `feColorMatrix`, then the three are recombined with `feBlend mode="screen"`. The slight displacement difference between channels is the rainbow fringe. Bigger spread = more visible rainbow, but heavy RGB ghosting on text — the default spread of 6 keeps text legible; raise it for a stronger prism look.
 5. The filter region is deliberately oversized — `x="-20%" y="-80%" width="140%" height="260%"` — so edge refraction can spill outside the element's box.
 6. **Graceful degradation**: browsers without `backdrop-filter: url()` support (Safari, Firefox) fall back to `blur(12px) saturate(1.5)` frosted glass via an `@supports` query. Chromium gets the pure refraction lens — no blur at all.
 7. On the CSS side, inset white highlights fake reflections on the curved edge, and a soft outer shadow makes the element float.
@@ -126,7 +126,7 @@ Injects the hidden SVG filter into `document.body`. Idempotent per id — callin
 | parameter | type | default | description |
 | --- | --- | --- | --- |
 | `options.id` | `string` | `'liquid-glass'` | Filter id. Must match the `url("#…")` in your CSS. |
-| `options.scales` | `[number, number, number]` | `[-140, -124, -108]` | Displacement scales for the R/G/B passes. Larger absolute values = stronger refraction; the spread between them = dispersion (rainbow) strength. |
+| `options.scales` | `[number, number, number]` | `[-127, -124, -121]` | Displacement scales for the R/G/B passes. Larger absolute values = stronger refraction; the spread between them = dispersion (rainbow) strength. The default spread (6) favors text legibility. |
 | `options.saturate` | `number` | `1.35` | Final saturation boost, baked into the filter as a trailing `feColorMatrix`. |
 | returns | `() => void` | — | Cleanup that removes the injected SVG. No-op if the filter already existed. |
 
@@ -144,7 +144,7 @@ Patches an **already-injected** filter in place — only the options you pass ar
 ```js
 slider.addEventListener('input', (e) => {
   const s = Number(e.target.value); // base strength
-  updateLiquidGlassFilter({ scales: [-(s + 16), -s, -(s - 16)] });
+  updateLiquidGlassFilter({ scales: [-(s + 3), -s, -(s - 3)] });
 });
 ```
 
@@ -208,8 +208,8 @@ The demo's control panel tunes everything live: nav size, refraction strength, d
 
 - `backdrop-filter: url("#liquid-glass")` 让 SVG 滤镜处理元素背景（backdrop）。
 - 位移贴图（256×64）的 R 通道控制水平位移、B 通道控制垂直位移，公式 `d = scale × (value/255 − 0.5)`，128 = 不位移。
-- 贴图剖面：中心平台（不位移）+ 边缘约 16px 内急剧爬升 = 等宽边缘折射带，模拟弧形玻璃边缘的弯光；负 scale（-140）产生放大透镜效果。
-- 同一张贴图以 -140/-124/-108 三个 scale 各位移一次，按 RGB 单通道拆开再 screen 混合，形成色散（彩虹边缘）。
+- 贴图剖面：中心平台（不位移）+ 边缘约 16px 内急剧爬升 = 等宽边缘折射带，模拟弧形玻璃边缘的弯光；负 scale（-124）产生放大透镜效果。
+- 同一张贴图以 -127/-124/-121 三个 scale 各位移一次，按 RGB 单通道拆开再 screen 混合，形成色散（彩虹边缘）。通道差越大彩虹越明显，但文字会出现 RGB 重影；默认差值 6 以保证文字清晰（原项目早期为 -140/-124/-108，已下调）。
 - 不支持 `backdrop-filter: url()` 的浏览器（Safari、Firefox）通过 `@supports` 自动降级为 `blur(12px) saturate(1.5)` 磨砂玻璃。
 
 **快速上手**

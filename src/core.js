@@ -44,16 +44,18 @@ function buildFilterSvg({ id, scales, saturate }) {
  * @param {object} [options]
  * @param {string} [options.id='liquid-glass'] Filter id. Must match the id
  *   referenced by your CSS `backdrop-filter: url("#...")`.
- * @param {[number, number, number]} [options.scales=[-140,-124,-108]]
+ * @param {[number, number, number]} [options.scales=[-127,-124,-121]]
  *   feDisplacementMap scales for the R/G/B passes. Larger absolute values
  *   refract more; the spread between them controls chromatic dispersion.
+ *   The default spread (6) keeps text legible; raise it for a stronger
+ *   prism look at the cost of RGB ghosting on text.
  * @param {number} [options.saturate=1.35] Final saturation boost.
  * @returns {() => void} cleanup function that removes the injected SVG.
  *   If the filter already existed (injected elsewhere), cleanup is a no-op.
  */
 export function injectLiquidGlassFilter({
   id = DEFAULT_FILTER_ID,
-  scales = [-140, -124, -108],
+  scales = [-127, -124, -121],
   saturate = 1.35,
 } = {}) {
   if (typeof document === 'undefined' || !document.body) {

@@ -4,6 +4,7 @@ export interface LiquidGlassFilterOptions {
   /**
    * feDisplacementMap scales for the R/G/B passes.
    * Larger absolute values refract more; the spread controls dispersion.
+   * Default [-127, -124, -121]: spread 6 keeps text legible.
    */
   scales?: [number, number, number];
   /** Final saturation boost. */

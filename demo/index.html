@@ -219,8 +219,8 @@
     </label>
     <label class="ctl">
       <span class="ctl-label">Dispersion</span>
-      <input id="ctl-dispersion" type="range" min="0" max="80" step="1" value="32" />
-      <span class="ctl-value" id="val-dispersion">32</span>
+      <input id="ctl-dispersion" type="range" min="0" max="80" step="1" value="6" />
+      <span class="ctl-value" id="val-dispersion">6</span>
     </label>
     <label class="ctl">
       <span class="ctl-label">Saturate</span>
@@ -238,8 +238,9 @@
       <span class="ctl-value" id="val-gamma">3.0</span>
     </label>
     <div class="panel-note">
-      Defaults match the original project: <code>scales -140/-124/-108</code>,
+      Legibility-first defaults: <code>scales -127/-124/-121</code>,
       <code>saturate 1.35</code>, map <code>edge 16px</code> / <code>gamma 3</code>.
+      (Original project used -140/-124/-108 — pretty, but ghosts text.)
     </div>
     <button id="ctl-reset" type="button">Reset</button>
   </aside>
