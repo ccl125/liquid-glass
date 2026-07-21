@@ -156,6 +156,8 @@ python3 -m http.server     # then open http://localhost:8000/demo/
 
 Opening `demo/index.html` directly via `file://` won't work — browsers block ES module imports over `file://` (CORS). Open it in Chrome/Edge for the full effect.
 
+The demo's control panel can also reshape the displacement map live (Edge width / Rim sharpness — it regenerates the map on an offscreen canvas and hot-swaps the filter's `feImage`). For offline customization, generate a map with `scripts/generate-map.mjs` and replace the data URI in `src/map.js`.
+
 ---
 
 ## 中文说明

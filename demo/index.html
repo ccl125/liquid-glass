@@ -169,7 +169,9 @@
       <h2>Live controls</h2>
       <p>The panel at bottom right is itself a <code>.liquid-glass</code> element. Its sliders
       call <code>updateLiquidGlassFilter()</code> on every input event — Strength is the base
-      displacement scale, Dispersion the total spread between the R and B channel scales.</p>
+      displacement scale, Dispersion the total spread between the R and B channel scales.
+      Edge and Rim sharp regenerate the displacement map itself (via an offscreen canvas)
+      and hot-swap the filter's <code>feImage</code>.</p>
     </div>
     <div class="card">
       <h2>How to spot it</h2>
@@ -212,9 +214,19 @@
       <input id="ctl-saturate" type="range" min="1" max="2" step="0.01" value="1.35" />
       <span class="ctl-value" id="val-saturate">1.35</span>
     </label>
+    <label class="ctl">
+      <span class="ctl-label">Edge</span>
+      <input id="ctl-edge" type="range" min="8" max="48" step="1" value="16" />
+      <span class="ctl-value" id="val-edge">16px</span>
+    </label>
+    <label class="ctl">
+      <span class="ctl-label">Rim sharp</span>
+      <input id="ctl-gamma" type="range" min="1" max="6" step="0.1" value="3" />
+      <span class="ctl-value" id="val-gamma">3.0</span>
+    </label>
     <div class="panel-note">
       Defaults match the original project: <code>scales -140/-124/-108</code>,
-      <code>saturate 1.35</code>.
+      <code>saturate 1.35</code>, map <code>edge 16px</code> / <code>gamma 3</code>.
     </div>
     <button id="ctl-reset" type="button">Reset</button>
   </aside>
