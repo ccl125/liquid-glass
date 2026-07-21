@@ -198,42 +198,6 @@ The demo's control panel tunes everything live: nav size, refraction strength, d
 - The oversized filter region means edge refraction can visibly spill outside the element against very empty/uniform backgrounds.
 - The effect is GPU-intensive on large elements; prefer it for navs, pills, cards — not full-screen overlays.
 
----
-
-## 中文说明
-
-**liquid-glass** 是一个"液态玻璃"效果库：不是常见的模糊磨砂，而是用 SVG 位移贴图滤镜（`feDisplacementMap`）让元素背后的内容发生真实折射，像弧形玻璃透镜一样弯折光线，边缘形成等宽折射带，并带彩虹色散。零依赖、纯 ESM、无构建步骤，包含框架无关核心（`injectLiquidGlassFilter`）和 React 包装（`<LiquidGlass>`），另有 `updateLiquidGlassFilter` 可在运行时实时调参。
-
-**原理要点**
-
-- `backdrop-filter: url("#liquid-glass")` 让 SVG 滤镜处理元素背景（backdrop）。
-- 位移贴图（256×64）的 R 通道控制水平位移、B 通道控制垂直位移，公式 `d = scale × (value/255 − 0.5)`，128 = 不位移。
-- 贴图剖面：中心平台（不位移）+ 边缘约 16px 内急剧爬升 = 等宽边缘折射带，模拟弧形玻璃边缘的弯光；负 scale（-124）产生放大透镜效果。
-- 同一张贴图以 -127/-124/-121 三个 scale 各位移一次，按 RGB 单通道拆开再 screen 混合，形成色散（彩虹边缘）。通道差越大彩虹越明显，但文字会出现 RGB 重影；默认差值 6 以保证文字清晰（原项目早期为 -140/-124/-108，已下调）。
-- 不支持 `backdrop-filter: url()` 的浏览器（Safari、Firefox）通过 `@supports` 自动降级为 `blur(12px) saturate(1.5)` 磨砂玻璃。
-
-**快速上手**
-
-```js
-import { injectLiquidGlassFilter } from 'liquid-glass';
-import 'liquid-glass/css';
-injectLiquidGlassFilter();
-```
-
-```html
-<nav class="liquid-glass">…</nav>
-```
-
-React：`import { LiquidGlass } from 'liquid-glass/react'`，用 `<LiquidGlass>` 包裹内容即可。
-
-**API**：`injectLiquidGlassFilter({ id, scales, saturate })` 注入滤镜（幂等，返回 cleanup）；`updateLiquidGlassFilter({ id, scales, saturate })` 就地更新已注入的滤镜（滤镜不存在返回 `false`），适合滑杆实时调参。CSS 侧 `.liquid-glass` 只提供半透明底色、inset 高光和外阴影，圆角布局等由使用者自行覆盖。
-
-**自定义**：`scales`（折射强度/色散差）、`saturate`（饱和度提升）、`id`（滤镜 id）；可用 `node scripts/generate-map.mjs out.png` 重新生成贴图（`--edge` 控制边缘折射带宽度、`--gamma` 控制陡峭度），demo 面板里也能实时调整这两项。
-
-**浏览器支持**：Chrome/Edge 全效果；Firefox、Safari 降级为磨砂模糊。
-
-**运行 demo**：仓库根目录 `python3 -m http.server` 后访问 `http://localhost:8000/demo/`（`file://` 直接双击打不开，浏览器会拦截 ESM 导入；请用 Chrome/Edge 查看完整效果）。
-
 ## License
 
 MIT © ccl125
