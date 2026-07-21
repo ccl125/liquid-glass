@@ -12,9 +12,9 @@
       python3 -m http.server     # then open http://localhost:8000/demo/
 
     Fallback behavior: Safari / Firefox do not support
-    `backdrop-filter: url(...)` — the pill nav falls back to a frosted-glass
-    blur automatically (see src/liquid-glass.css). Open in Chrome/Edge to see
-    the real refraction + chromatic dispersion effect.
+    `backdrop-filter: url(...)` — the pill nav and the control panel fall
+    back to a frosted-glass blur automatically (see src/liquid-glass.css).
+    Open in Chrome/Edge to see the real refraction + chromatic dispersion.
   -->
   <link rel="stylesheet" href="../src/liquid-glass.css" />
   <style>
@@ -35,30 +35,33 @@
       filter: saturate(1.1);
     }
 
+    /* Glass capsule nav — sized close to the original project.
+       height / font-size are driven live by the Size slider. */
     .pill-nav {
       position: sticky;
-      top: 20px;
+      top: 24px;
       z-index: 10;
-      margin: 20px auto 0;
+      margin: 24px auto 0;
       width: fit-content;
       display: flex;
-      gap: 28px;
+      gap: 36px;
       align-items: center;
-      padding: 12px 32px;
+      height: 62px;
+      padding: 0 40px;
       border-radius: 9999px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       color: #222;
     }
-    .pill-nav span { opacity: 0.75; }
-    .pill-nav b { font-size: 15px; }
+    .pill-nav span { opacity: 0.72; }
+    .pill-nav b { font-size: 1.1em; letter-spacing: 0.01em; }
 
     main {
       position: relative;
       z-index: 1;
       max-width: 680px;
       margin: 0 auto;
-      padding: 80px 24px 240px;
+      padding: 80px 24px 320px;
       display: grid;
       gap: 28px;
     }
@@ -78,6 +81,68 @@
       border-radius: 12px;
       padding: 10px 16px;
     }
+
+    /* Control panel — itself a .liquid-glass element. */
+    .panel {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      z-index: 20;
+      width: 272px;
+      padding: 18px 20px 16px;
+      border-radius: 18px;
+      color: #1c1c1c;
+    }
+    .panel-title {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 14px;
+    }
+    .ctl {
+      display: grid;
+      grid-template-columns: 76px 1fr 46px;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .ctl-label { font-size: 12px; font-weight: 600; opacity: 0.75; }
+    .ctl-value {
+      font-family: "SF Mono", "Menlo", "Consolas", monospace;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      opacity: 0.85;
+    }
+    .ctl input[type="range"] {
+      width: 100%;
+      height: 3px;
+      accent-color: #333;
+      cursor: pointer;
+    }
+    .panel-note {
+      font-size: 11px;
+      line-height: 1.55;
+      opacity: 0.62;
+      margin: 12px 0 10px;
+    }
+    .panel-note code { font-family: "SF Mono", "Menlo", "Consolas", monospace; font-size: 10.5px; }
+    #ctl-reset {
+      width: 100%;
+      padding: 7px 0;
+      border: none;
+      border-radius: 9999px;
+      background: rgba(0, 0, 0, 0.72);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    #ctl-reset:hover { background: rgba(0, 0, 0, 0.85); }
   </style>
 </head>
 <body>
@@ -92,7 +157,7 @@
   </nav>
 
   <main>
-    <div class="hint">Scroll down — watch the pill nav refract the stripes and colors behind it (Chrome/Edge).</div>
+    <div class="hint">Scroll down — watch the pill nav refract the stripes and colors behind it (Chrome/Edge). Tune it live with the panel at bottom right.</div>
     <div class="card">
       <h2>Refraction, not blur</h2>
       <p>The sticky nav above uses <code>backdrop-filter: url(#liquid-glass)</code> — an SVG
@@ -101,22 +166,16 @@
       regular frosted blur.</p>
     </div>
     <div class="card">
+      <h2>Live controls</h2>
+      <p>The panel at bottom right is itself a <code>.liquid-glass</code> element. Its sliders
+      call <code>updateLiquidGlassFilter()</code> on every input event — Strength is the base
+      displacement scale, Dispersion the total spread between the R and B channel scales.</p>
+    </div>
+    <div class="card">
       <h2>How to spot it</h2>
       <p>Look at how the diagonal stripes warp and magnify as they pass under the nav while
       scrolling. The bending is strongest within ~16px of the nav's edge — that is the
       displacement map's steep edge climb simulating a curved rim.</p>
-    </div>
-    <div class="card">
-      <h2>Chromatic dispersion</h2>
-      <p>The same displacement map is applied three times with slightly different scales
-      (-140 / -124 / -108), once per RGB channel, then screen-blended. The tiny offset
-      between channels produces the rainbow fringe, like light through a prism.</p>
-    </div>
-    <div class="card">
-      <h2>Fallback</h2>
-      <p>Browsers without <code>backdrop-filter: url()</code> support get
-      <code>blur(12px) saturate(1.5)</code> via an <code>@supports</code> query in
-      <code>liquid-glass.css</code> — same element, no JS feature detection needed.</p>
     </div>
     <div class="card">
       <h2>Keep scrolling…</h2>
@@ -131,9 +190,35 @@
     </div>
   </main>
 
-  <script type="module">
-    import { injectLiquidGlassFilter } from '../src/core.js';
-    injectLiquidGlassFilter();
-  </script>
+  <aside class="panel liquid-glass">
+    <div class="panel-title">Liquid Glass Controls</div>
+    <label class="ctl">
+      <span class="ctl-label">Size</span>
+      <input id="ctl-size" type="range" min="40" max="96" step="1" value="62" />
+      <span class="ctl-value" id="val-size">62px</span>
+    </label>
+    <label class="ctl">
+      <span class="ctl-label">Strength</span>
+      <input id="ctl-strength" type="range" min="0" max="220" step="1" value="124" />
+      <span class="ctl-value" id="val-strength">124</span>
+    </label>
+    <label class="ctl">
+      <span class="ctl-label">Dispersion</span>
+      <input id="ctl-dispersion" type="range" min="0" max="80" step="1" value="32" />
+      <span class="ctl-value" id="val-dispersion">32</span>
+    </label>
+    <label class="ctl">
+      <span class="ctl-label">Saturate</span>
+      <input id="ctl-saturate" type="range" min="1" max="2" step="0.01" value="1.35" />
+      <span class="ctl-value" id="val-saturate">1.35</span>
+    </label>
+    <div class="panel-note">
+      Defaults match the original project: <code>scales -140/-124/-108</code>,
+      <code>saturate 1.35</code>.
+    </div>
+    <button id="ctl-reset" type="button">Reset</button>
+  </aside>
+
+  <script type="module" src="./panel.js"></script>
 </body>
 </html>

@@ -107,6 +107,19 @@ Props: `children`, `className`, `style`, `filterId`, `scales`, `saturate`. The f
 | `scales` | `[-140, -124, -108]` | Displacement scales for the R/G/B passes. Larger absolute values = stronger refraction; the spread between them = dispersion (rainbow) strength. |
 | `saturate` | `1.35` | Final saturation boost, baked into the filter. |
 
+### Live updates
+
+`updateLiquidGlassFilter(options)` patches an already-injected filter in place — only the options you pass are touched. Returns `false` if no filter with that id exists, `true` on success. Handy for sliders and settings panels (see `demo/panel.js`):
+
+```js
+import { updateLiquidGlassFilter } from 'liquid-glass';
+
+slider.addEventListener('input', (e) => {
+  const s = Number(e.target.value); // base strength
+  updateLiquidGlassFilter({ scales: [-(s + 16), -s, -(s - 16)] });
+});
+```
+
 ### Regenerating the displacement map
 
 `src/map.js` ships a ready-made map as a data URI. To generate your own (dependency-free Node script, hand-rolled PNG encoder):

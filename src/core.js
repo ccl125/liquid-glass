@@ -70,3 +70,38 @@ export function injectLiquidGlassFilter({
     host.remove();
   };
 }
+
+/**
+ * Update an already-injected liquid glass filter in place — useful for live
+ * controls. Only the options you pass are updated.
+ *
+ * DOM access happens inside this function only.
+ *
+ * @param {object} [options]
+ * @param {string} [options.id='liquid-glass'] Filter id to look up.
+ * @param {[number, number, number]} [options.scales] New R/G/B displacement
+ *   scales, applied to the three feDisplacementMap primitives in order.
+ * @param {number} [options.saturate] New value for the trailing
+ *   feColorMatrix[type="saturate"] primitive.
+ * @returns {boolean} false if no filter with that id exists, true on success.
+ */
+export function updateLiquidGlassFilter({ id = DEFAULT_FILTER_ID, scales, saturate } = {}) {
+  if (typeof document === 'undefined') {
+    return false;
+  }
+  const filter = document.getElementById(id);
+  if (!filter) {
+    return false;
+  }
+  if (scales) {
+    const primitives = filter.querySelectorAll('feDisplacementMap');
+    primitives.forEach((el, i) => {
+      if (i < scales.length) el.setAttribute('scale', String(scales[i]));
+    });
+  }
+  if (saturate !== undefined) {
+    const el = filter.querySelector('feColorMatrix[type="saturate"]');
+    if (el) el.setAttribute('values', String(saturate));
+  }
+  return true;
+}
