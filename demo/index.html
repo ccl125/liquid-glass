@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>liquid-glass demo</title>
+  <!--
+    NOTE: this demo imports ES modules via relative paths, which browsers
+    block over file:// (CORS). Serve the repo root instead:
+
+      npx serve .                # then open /demo/
+      python3 -m http.server     # then open http://localhost:8000/demo/
+
+    Fallback behavior: Safari / Firefox do not support
+    `backdrop-filter: url(...)` — the pill nav falls back to a frosted-glass
+    blur automatically (see src/liquid-glass.css). Open in Chrome/Edge to see
+    the real refraction + chromatic dispersion effect.
+  -->
+  <link rel="stylesheet" href="../src/liquid-glass.css" />
+  <style>
+    * { margin: 0; box-sizing: border-box; }
+    html { font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    body { min-height: 100vh; }
+
+    /* Busy, colorful backdrop so the refraction is easy to see. */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 15% 20%, #ff9a9e 0 18%, transparent 40%),
+        radial-gradient(circle at 85% 15%, #a18cd1 0 16%, transparent 42%),
+        radial-gradient(circle at 70% 75%, #84fab0 0 18%, transparent 45%),
+        radial-gradient(circle at 25% 80%, #8fd3f4 0 20%, transparent 48%),
+        repeating-linear-gradient(45deg, #fbc2eb 0 24px, #a6c1ee 24px 48px);
+      filter: saturate(1.1);
+    }
+
+    .pill-nav {
+      position: sticky;
+      top: 20px;
+      z-index: 10;
+      margin: 20px auto 0;
+      width: fit-content;
+      display: flex;
+      gap: 28px;
+      align-items: center;
+      padding: 12px 32px;
+      border-radius: 9999px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #222;
+    }
+    .pill-nav span { opacity: 0.75; }
+    .pill-nav b { font-size: 15px; }
+
+    main {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 80px 24px 240px;
+      display: grid;
+      gap: 28px;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 16px;
+      padding: 24px 28px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    }
+    .card h2 { font-size: 18px; margin-bottom: 8px; }
+    .card p { font-size: 14px; line-height: 1.7; color: #444; }
+    .hint {
+      text-align: center;
+      font-size: 13px;
+      color: #555;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 12px;
+      padding: 10px 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="backdrop"></div>
+
+  <!-- The glass capsule: .liquid-glass comes from ../src/liquid-glass.css -->
+  <nav class="pill-nav liquid-glass">
+    <b>liquid-glass</b>
+    <span>Demo</span>
+    <span>Docs</span>
+    <span>GitHub</span>
+  </nav>
+
+  <main>
+    <div class="hint">Scroll down — watch the pill nav refract the stripes and colors behind it (Chrome/Edge).</div>
+    <div class="card">
+      <h2>Refraction, not blur</h2>
+      <p>The sticky nav above uses <code>backdrop-filter: url(#liquid-glass)</code> — an SVG
+      displacement-map lens that bends the backdrop like curved glass, with a subtle rainbow
+      fringe (chromatic dispersion) along its edges. On Safari/Firefox it degrades to a
+      regular frosted blur.</p>
+    </div>
+    <div class="card">
+      <h2>How to spot it</h2>
+      <p>Look at how the diagonal stripes warp and magnify as they pass under the nav while
+      scrolling. The bending is strongest within ~16px of the nav's edge — that is the
+      displacement map's steep edge climb simulating a curved rim.</p>
+    </div>
+    <div class="card">
+      <h2>Chromatic dispersion</h2>
+      <p>The same displacement map is applied three times with slightly different scales
+      (-140 / -124 / -108), once per RGB channel, then screen-blended. The tiny offset
+      between channels produces the rainbow fringe, like light through a prism.</p>
+    </div>
+    <div class="card">
+      <h2>Fallback</h2>
+      <p>Browsers without <code>backdrop-filter: url()</code> support get
+      <code>blur(12px) saturate(1.5)</code> via an <code>@supports</code> query in
+      <code>liquid-glass.css</code> — same element, no JS feature detection needed.</p>
+    </div>
+    <div class="card">
+      <h2>Keep scrolling…</h2>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+      incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+      exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    <div class="card">
+      <h2>Almost there</h2>
+      <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+      fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { injectLiquidGlassFilter } from '../src/core.js';
+    injectLiquidGlassFilter();
+  </script>
+</body>
+</html>

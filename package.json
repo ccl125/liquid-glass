@@ -1,0 +1,45 @@
+{
+  "name": "liquid-glass",
+  "version": "0.1.0",
+  "description": "Apple-style liquid glass effect: an SVG displacement-map refraction lens for backdrop-filter, with frosted-glass fallback. Vanilla core + React wrapper, no build step.",
+  "type": "module",
+  "license": "MIT",
+  "author": "ccl125",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccl125/liquid-glass.git"
+  },
+  "keywords": [
+    "liquid-glass",
+    "backdrop-filter",
+    "svg-filter",
+    "feDisplacementMap",
+    "glassmorphism",
+    "refraction",
+    "css",
+    "react"
+  ],
+  "exports": {
+    ".": "./src/core.js",
+    "./map": "./src/map.js",
+    "./react": "./src/react/LiquidGlass.jsx",
+    "./css": "./src/liquid-glass.css"
+  },
+  "types": "./src/index.d.ts",
+  "files": [
+    "src",
+    "scripts",
+    "demo"
+  ],
+  "scripts": {
+    "generate-map": "node scripts/generate-map.mjs"
+  },
+  "peerDependencies": {
+    "react": ">=17"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}
